@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "PomodoroTimer (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "PomodoroTimer (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
