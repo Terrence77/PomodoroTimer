@@ -50,3 +50,48 @@ The script builds and launches the app, runs `tests\UITests\TimerPage.UITests.ps
 closes the app afterwards, and exits non-zero if any test fails. Results
 (`test-results.json` and screenshots) are written to `tests\UITests\TestResults\` (git-ignored).
 Avoid using the mouse or keyboard while the UI tests run.
+
+## Packaging
+
+Build a signed **Release MSIX** (self-contained: it carries the .NET runtime and the Windows App
+SDK runtime, so nothing else needs to be installed). Requires the WinApp CLI (0.7+) on `PATH`:
+
+```powershell
+.\Package.ps1               # optional: -Platform ARM64
+```
+
+The package is written to `artifacts\PomodoroTimer_<version>_<arch>.msix` (git-ignored).
+
+The first run creates a self-signed development certificate for the manifest Publisher
+(`CN=Terrence77`) in `certs\` (git-ignored): `devcert.pfx`, its public key `devcert.cer`, and a
+random password in `devcert.password.txt`. You can supply the password yourself with
+`-CertPassword` or the `POMODORO_CERT_PASSWORD` environment variable instead. Never commit
+anything from `certs\`. The script does not touch any Windows certificate store.
+
+**Trust the certificate** (once per machine, in an **elevated** PowerShell):
+
+```powershell
+Import-Certificate -FilePath .\certs\devcert.cer -CertStoreLocation Cert:\LocalMachine\TrustedPeople
+```
+
+**Install** (first remove the development registration made by `BuildAndRun.ps1` /
+`RunUITests.ps1`, which has the same identity):
+
+```powershell
+Get-AppxPackage -Name 4AA179C1-B255-4BAE-8064-EE344466D710 |
+    Where-Object { $_.Publisher -eq 'CN=Terrence77' -and $_.IsDevelopmentMode } |
+    Remove-AppxPackage
+Add-AppxPackage -Path .\artifacts\PomodoroTimer_1.0.0.0_x64.msix
+```
+
+**Uninstall:**
+
+```powershell
+Get-AppxPackage -Name 4AA179C1-B255-4BAE-8064-EE344466D710 | Remove-AppxPackage
+```
+
+The installed MSIX and the development registration share the same package identity, so
+uninstall the MSIX before running `BuildAndRun.ps1` or `RunUITests.ps1` again.
+
+To stop trusting the certificate later, remove it from `Cert:\LocalMachine\TrustedPeople`
+(elevated): `Get-ChildItem Cert:\LocalMachine\TrustedPeople | Where-Object Subject -eq 'CN=Terrence77' | Remove-Item`.
