@@ -14,3 +14,14 @@ AppPackages/
 
 # VS / VS Code
 .vs/
+
+# Build logs and test results
+*.binlog
+[Tt]est[Rr]esult*/
+*.trx
+
+# Packaging layout output
+BundleArtifacts/
+*.msixupload
+*.appxbundle
+*.appxupload
