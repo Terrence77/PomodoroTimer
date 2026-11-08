@@ -29,3 +29,24 @@ No CI, auto-review, or release automation is included — this template is inten
 5. Run `/wrapup`, then review the Draft PR, run the app once yourself, and **squash-merge**.
 
 The loop is: **Issue → `/kickoff` → implement → `/wrapup` → review → squash merge**.
+
+## Running tests
+
+**Unit tests** (headless, no UI) — xUnit tests for the UI-free logic in `PomodoroTimer.Core`:
+
+```powershell
+dotnet test
+```
+
+**UI tests** — drive the real app through UI Automation with the WinApp CLI (`winapp ui`).
+They need the WinApp CLI (0.7+) on `PATH` and an interactive, unlocked desktop, so they are
+kept out of `dotnet test`:
+
+```powershell
+.\RunUITests.ps1            # optional: -Configuration Release
+```
+
+The script builds and launches the app, runs `tests\UITests\TimerPage.UITests.ps1`, always
+closes the app afterwards, and exits non-zero if any test fails. Results
+(`test-results.json` and screenshots) are written to `tests\UITests\TestResults\` (git-ignored).
+Avoid using the mouse or keyboard while the UI tests run.
