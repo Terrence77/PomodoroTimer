@@ -12,6 +12,11 @@
     <UseWinUI>true</UseWinUI>
     <WinUISDKReferences>false</WinUISDKReferences>
     <EnableMsixTooling>true</EnableMsixTooling>
+    <!--
+      Carry the Windows App SDK runtime inside the app (and the MSIX) so the package installs
+      on machines without the Windows App SDK runtime / framework package preinstalled.
+    -->
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
