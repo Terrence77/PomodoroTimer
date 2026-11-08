@@ -11,6 +11,11 @@ AppPackages/
 *.appx
 *.cer
 *.pfx
+*.msixbundle
+
+# Package.ps1: release packages and the local dev signing certificate (never commit)
+artifacts/
+certs/
 
 # VS / VS Code
 .vs/
